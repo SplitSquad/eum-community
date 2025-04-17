@@ -13,7 +13,7 @@ public class PostFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postFileId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private Post post;
 

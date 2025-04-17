@@ -34,10 +34,9 @@ public class AwsS3Service {
 
     private String checkAndUpload(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
-
         String ext = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
 
-        String S3UploadFilename = UUID.randomUUID().toString().substring(0,12) + "-" + originalFilename;
+        String S3UploadFilename = UUID.randomUUID().toString().replace("-", "").substring(0, 16) + "." + ext;
 
         String url = "";
         try{
@@ -51,8 +50,7 @@ public class AwsS3Service {
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
 
             PutObjectRequest request = new PutObjectRequest(
-                    bucketName, S3UploadFilename, byteArrayInputStream, metadata
-            ).withCannedAcl(CannedAccessControlList.PublicRead);
+                    bucketName, S3UploadFilename, byteArrayInputStream, metadata);
             amazonS3.putObject(request);
 
             byteArrayInputStream.close();
@@ -63,5 +61,9 @@ public class AwsS3Service {
             e.printStackTrace();
         }
         return url;
+    }
+
+    public void delete(String key) {
+        amazonS3.deleteObject(bucketName, key);
     }
 }
