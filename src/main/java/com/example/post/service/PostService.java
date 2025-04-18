@@ -291,7 +291,6 @@ public class PostService {
         return ResponseEntity.ok(postResDto);
     }
 
-    @Transactional
     public ResponseEntity<?> deletePost(String token, Long postId) {
         Optional<User> user = verifyToken(token);
         if(user.isEmpty()) {
@@ -309,15 +308,13 @@ public class PostService {
             return ResponseEntity.badRequest().body("작성자/관리자만 삭제 가능");
         }
 
-
-
         if(post.getIsFile() == 1) {
             List<PostFile> postFileList = postFileRepository.findByPost_PostId(postId);
             for(PostFile postFile : postFileList){
                 String url = postFile.getUrl();
                 String key = extractKeyFromUrl(url);
                 awsS3Service.delete(key);
-                System.out.println(key);
+                postFileRepository.delete(postFile);
             }
         }
         postRepository.deleteById(postId);
