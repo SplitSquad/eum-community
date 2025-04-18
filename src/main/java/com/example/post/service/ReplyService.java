@@ -121,6 +121,13 @@ public class ReplyService {
             replyResDto.setUserName(reply.getUser().getName());
             replyResDto.setCreatedAt(reply.getCreatedAt());
 
+            ReplyReaction replyReaction = replyReactionRepository
+                    .findByReply_ReplyIdAndUser_UserId(reply.getReplyId(), user.get().getUserId());
+
+            if(replyReaction != null) {
+                replyResDto.setIsState(replyReaction.getOption());
+            }
+
             replyResDtoList.add(replyResDto);
         }
         return ResponseEntity.ok(replyResDtoList);
@@ -170,7 +177,7 @@ public class ReplyService {
 
         Reply reply = replyRepository.findByReplyId(replyId);
 
-        if(user.get() != reply.getUser() && !user.get().getRole().equals("ADMIN")) {
+        if(user.get() != reply.getUser() && !user.get().getRole().equals("ROLE_ADMIN")) {
             return ResponseEntity.badRequest().body("작성자/관리자만 수정 가능");
         }
 

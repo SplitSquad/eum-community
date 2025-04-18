@@ -140,6 +140,12 @@ public class CommentService {
             commentResDto.setCreatedAt(comment.getCreatedAt());
             commentResDto.setUserName(comment.getUser().getName());
 
+            CommentReaction commentReaction = commentReactionRepository
+                    .findByComment_CommentIdAndUser_UserId(comment.getCommentId(), user.get().getUserId());
+            if(commentReaction != null) {
+                commentResDto.setIsState(commentReaction.getOption());
+            }
+
             commentResDtoList.add(commentResDto);
 
         }
@@ -193,7 +199,7 @@ public class CommentService {
 
         Comment comment = commentRepository.findById(commentId).get();
 
-        if(user.get() != comment.getUser() && !user.get().getRole().equals("ADMIN")) {
+        if(user.get() != comment.getUser() && !user.get().getRole().equals("ROLE_ADMIN")) {
             return ResponseEntity.badRequest().body("작성자/관리자만 수정 가능");
         }
         commentRepository.delete(comment);
@@ -280,6 +286,13 @@ public class CommentService {
             commentResDto.setPostTitle(translatedPost.getTitle());
             commentResDto.setUserName(comment.getUser().getName());
             commentResDto.setPostId(comment.getPost().getPostId());
+
+            CommentReaction commentReaction = commentReactionRepository
+                    .findByComment_CommentIdAndUser_UserId(comment.getCommentId(), user.get().getUserId());
+            if(commentReaction != null) {
+                commentResDto.setIsState(commentReaction.getOption());
+            }
+
             commentResDtoList.add(commentResDto);
         }
         return ResponseEntity.ok(Map.of(

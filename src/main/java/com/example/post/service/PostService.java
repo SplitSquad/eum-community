@@ -211,6 +211,13 @@ public class PostService {
                 post.getUser().getName(), post.getCreatedAt(), urls,
                 post.getCategory(), tags);
 
+        PostReaction postReaction = postReactionRepository.findByUser_UserIdAndPost_PostId(
+                user.get().getUserId(), postId
+        );
+        if(postReaction != null) {
+            postResDto.setIsState(postReaction.getOption());
+        }
+
         return ResponseEntity.ok(postResDto);
     }
 
@@ -297,19 +304,12 @@ public class PostService {
             return ResponseEntity.badRequest().body("존재하지 않는 게시글");
         }
 
-        if(!user.get().getRole().equals("ADMIN") && user.get().getUserId() !=
+        if(!user.get().getRole().equals("ROLE_ADMIN") && user.get().getUserId() !=
             post.getUser().getUserId()) {
             return ResponseEntity.badRequest().body("작성자/관리자만 삭제 가능");
         }
 
 
-        /*List<PostFile> files = postFileRepository.findByPost_PostId(postId);
-        for (PostFile file : files) {
-            String url = file.getUrl();
-            String key = extractKeyFromUrl(url);
-
-            awsS3Service.delete(key);
-        }*/
 
         if(post.getIsFile() == 1) {
             List<PostFile> postFileList = postFileRepository.findByPost_PostId(postId);

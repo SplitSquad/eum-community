@@ -13,6 +13,7 @@ public class PostResDto {
     Long views;
     Long like;
     Long dislike;
+    String isState;
     String title;
     String content;
     String userName;

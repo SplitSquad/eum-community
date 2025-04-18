@@ -7,6 +7,7 @@ public class ReplyResDto {
     Long replyId;
     Long like;
     Long dislike;
+    String isState;
     String content;
     String userName;
     String createdAt;

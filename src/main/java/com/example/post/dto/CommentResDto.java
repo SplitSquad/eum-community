@@ -9,6 +9,7 @@ public class CommentResDto {
     Long dislike;
     Long reply;
     Long postId;
+    String isState;
     String content;
     String userName;
     String createdAt;
