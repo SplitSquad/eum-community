@@ -1,6 +1,12 @@
 package com.example.post.service;
 
+import com.example.post.dto.PostReqDto;
+import com.example.post.entity.Post;
+import com.example.post.entity.TranslatedPost;
+import com.example.post.repository.TranslatedPostRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -14,11 +20,15 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class TranslationService {
     @Value("${translation.api-key}")
     private String apiKey;
+    private final TranslatedPostRepository translatedPostRepository;
 
     private static final String API_URL = "https://api-free.deepl.com/v2/translate";
+
+    private final String[] targetLanguage = {"KO", "EN", "JA", "ZH", "DE", "FR", "ES", "RU"};
 
     public Optional<String> translate(String text, String sourceLang, String targetLang) {
         RestTemplate restTemplate = new RestTemplate();
@@ -43,6 +53,34 @@ public class TranslationService {
         } catch (Exception e) {
             e.printStackTrace();
             return Optional.empty();
+        }
+    }
+
+    @Async
+    public void translatedAndSave(Post post, PostReqDto postReqDto){
+        for(int i = 0; i < targetLanguage.length; i++) { // 9개 언어로 번역해서 저장
+            TranslatedPost translatedPost = new TranslatedPost();
+            translatedPost.setPost(post);
+            translatedPost.setLanguage(targetLanguage[i]);
+
+            if(postReqDto.getLanguage().equals(targetLanguage[i])) {
+                translatedPost.setContent(postReqDto.getContent());
+                translatedPost.setTitle(postReqDto.getTitle());
+                translatedPostRepository.save(translatedPost);
+                continue;
+            }
+
+            Optional<String> translatedTitle = translate(
+                    postReqDto.getTitle(), postReqDto.getLanguage(), targetLanguage[i]);
+
+            Optional<String> translatedContent = translate(
+                    postReqDto.getContent(), postReqDto.getLanguage(), targetLanguage[i]);
+
+            if (translatedTitle.isEmpty() || translatedContent.isEmpty()) continue;
+
+            translatedPost.setContent(translatedContent.get());
+            translatedPost.setTitle(translatedTitle.get());
+            translatedPostRepository.save(translatedPost);
         }
     }
 }

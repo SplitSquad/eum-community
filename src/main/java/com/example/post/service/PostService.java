@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -137,7 +138,7 @@ public class PostService {
                 post.getUser().getName(), post.getCreatedAt(), urls,
                 post.getCategory(), postReqDto.getTags());
 
-        for(int i = 0; i < targetLanguage.length; i++) { // 9개 언어로 번역해서 저장
+        /*for(int i = 0; i < targetLanguage.length; i++) { // 9개 언어로 번역해서 저장
             TranslatedPost translatedPost = new TranslatedPost();
             translatedPost.setPost(post);
             translatedPost.setLanguage(targetLanguage[i]);
@@ -160,7 +161,8 @@ public class PostService {
             translatedPost.setContent(translatedContent.get());
             translatedPost.setTitle(translatedTitle.get());
             translatedPostRepository.save(translatedPost);
-        }
+        }*/
+        translationService.translatedAndSave(post, postReqDto);
 
         // 태그 저장
         for(String tagName : postReqDto.getTags()) {
