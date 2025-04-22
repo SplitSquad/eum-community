@@ -62,6 +62,7 @@ public class CommentService {
                 .dislike(0L)
                 .createdAt(comment.getCreatedAt())
                 .userName(comment.getUser().getName())
+                .reply(0L)
                 .build();
 
         translationService.translateComment(comment, commentReqDto, null);

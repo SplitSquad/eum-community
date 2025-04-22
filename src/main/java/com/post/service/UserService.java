@@ -56,15 +56,25 @@ public class UserService {
             e.printStackTrace();
             return;
         }
-        User user = User.builder()
-                .name(kafkaUserDto.getName())
-                .nation(kafkaUserDto.getNation())
-                .language(kafkaUserDto.getLanguage())
-                .role(kafkaUserDto.getRole())
-                .address(kafkaUserDto.getAddress())
-                .userId(kafkaUserDto.getUserId())
-                .build();
-        userRepository.save(user);
+        try {
+            if(userRepository.existsById(kafkaUserDto.getUserId())){
+                return;
+            }
+            System.out.println(kafkaUserDto);
+            User user = User.builder()
+                    .name(kafkaUserDto.getName())
+                    .nation(kafkaUserDto.getNation())
+                    .language(kafkaUserDto.getLanguage())
+                    .role(kafkaUserDto.getRole())
+                    .address(kafkaUserDto.getAddress())
+                    .userId(kafkaUserDto.getUserId())
+                    .build();
+            userRepository.save(user);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return;
+        }
     }
 
     @Transactional

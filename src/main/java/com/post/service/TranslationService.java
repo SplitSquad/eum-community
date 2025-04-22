@@ -61,18 +61,17 @@ public class TranslationService {
 
     @Async
     public void translatePost(Post post, PostReqDto postReqDto, Long postId) {
-        for(int i = 0; i < targetLanguage.length; i++) { // 9개 언어로 번역해서 저장
+        for (String language : targetLanguage) { // 9개 언어로 번역해서 저장
             TranslatedPost translatedPost;
-            if(postId == null){
+            if (postId == null) {
                 translatedPost = new TranslatedPost();
-            }
-            else{
-                translatedPost = translatedPostRepository.findByPost_PostIdAndLanguage(postId, targetLanguage[i]);
+            } else {
+                translatedPost = translatedPostRepository.findByPost_PostIdAndLanguage(postId, language);
             }
             translatedPost.setPost(post);
-            translatedPost.setLanguage(targetLanguage[i]);
+            translatedPost.setLanguage(language);
 
-            if(postReqDto.getLanguage().equals(targetLanguage[i])) {
+            if (postReqDto.getLanguage().equals(language)) {
                 translatedPost.setContent(postReqDto.getContent());
                 translatedPost.setTitle(postReqDto.getTitle());
                 translatedPostRepository.save(translatedPost);
@@ -80,10 +79,10 @@ public class TranslationService {
             }
 
             Optional<String> translatedTitle = translate(
-                    postReqDto.getTitle(), postReqDto.getLanguage(), targetLanguage[i]);
+                    postReqDto.getTitle(), postReqDto.getLanguage(), language);
 
             Optional<String> translatedContent = translate(
-                    postReqDto.getContent(), postReqDto.getLanguage(), targetLanguage[i]);
+                    postReqDto.getContent(), postReqDto.getLanguage(), language);
 
             if (translatedTitle.isEmpty() || translatedContent.isEmpty()) continue;
 
@@ -95,26 +94,25 @@ public class TranslationService {
 
     @Async
     public void translateComment(Comment comment, CommentReqDto commentReqDto, Long commentId) {
-        for(int i = 0; i < targetLanguage.length; i++) { // 9개 언어로 번역해서 저장
+        for (String language : targetLanguage) { // 9개 언어로 번역해서 저장
             TranslatedComment translatedComment;
-            if(commentId == null){
+            if (commentId == null) {
                 translatedComment = new TranslatedComment();
-            }
-            else{
+            } else {
                 translatedComment = translatedCommentRepository.
-                        findByComment_CommentIdAndLanguage(comment.getCommentId(), targetLanguage[i]);
+                        findByComment_CommentIdAndLanguage(comment.getCommentId(), language);
             }
             translatedComment.setComment(comment);
-            translatedComment.setLanguage(targetLanguage[i]);
+            translatedComment.setLanguage(language);
 
-            if(commentReqDto.getLanguage().equals(targetLanguage[i])) {
+            if (commentReqDto.getLanguage().equals(language)) {
                 translatedComment.setContent(commentReqDto.getContent());
                 translatedCommentRepository.save(translatedComment);
                 continue;
             }
 
             Optional<String> translatedContent = translate(
-                    commentReqDto.getContent(), commentReqDto.getLanguage(), targetLanguage[i]);
+                    commentReqDto.getContent(), commentReqDto.getLanguage(), language);
 
 
             if (translatedContent.isEmpty()) continue;
@@ -126,26 +124,25 @@ public class TranslationService {
 
     @Async
     public void translateReply(Reply reply, ReplyReqDto replyReqDto, Long replyId) {
-        for(int i = 0; i < targetLanguage.length; i++) { // 9개 언어로 번역해서 저장
+        for (String language : targetLanguage) { // 9개 언어로 번역해서 저장
             TranslatedReply translatedReply;
-            if(replyId == null){
+            if (replyId == null) {
                 translatedReply = new TranslatedReply();
-            }
-            else{
+            } else {
                 translatedReply = translatedReplyRepository
-                        .findByReply_ReplyIdAndLanguage(replyId, targetLanguage[i]);
+                        .findByReply_ReplyIdAndLanguage(replyId, language);
             }
-            translatedReply.setLanguage(targetLanguage[i]);
+            translatedReply.setLanguage(language);
             translatedReply.setReply(reply);
 
-            if(replyReqDto.getLanguage().equals(targetLanguage[i])) {
+            if (replyReqDto.getLanguage().equals(language)) {
                 translatedReply.setContent(replyReqDto.getContent());
                 translatedReplyRepository.save(translatedReply);
                 continue;
             }
 
             Optional<String> translatedContent = translate(
-                    replyReqDto.getContent(), replyReqDto.getLanguage(), targetLanguage[i]);
+                    replyReqDto.getContent(), replyReqDto.getLanguage(), language);
 
             if (translatedContent.isEmpty()) continue;
 
