@@ -15,47 +15,50 @@ public interface TranslatedPostRepository extends JpaRepository<TranslatedPost, 
     @Query("SELECT tp FROM TranslatedPost tp WHERE " +
             "(:category = '전체' OR tp.post.category = :category) AND " +
             "(:region = '전체' OR tp.post.user.address LIKE CONCAT('%', :region, '%')) AND " +
-            "tp.language = :language AND tp.title LIKE CONCAT('%', :keyword, '%')")
-    Page<TranslatedPost> findByCategoryAndRegionAndTitle(
-            @Param("category") String category,
-            @Param("region")String region,
-            @Param("keyword")String keyword,
-            @Param("language")String language,
-            Pageable pageable);
-
-    @Query("SELECT tp FROM TranslatedPost tp WHERE " +
-            "(:category = '전체' OR tp.post.category = :category) AND " +
-            "(:region = '전체' OR tp.post.user.address LIKE CONCAT('%', :region, '%')) AND " +
-            "tp.language = :language AND tp.content LIKE CONCAT('%', :keyword," +
-            " '%')")
-    Page<TranslatedPost> findByCategoryAndRegionAndContent(
-            @Param("category") String category,
-            @Param("region") String region,
-            @Param("keyword")String keyword,
-            @Param("language") String language,
-            Pageable pageable);
-
-    @Query("SELECT tp FROM TranslatedPost tp WHERE " +
-            "(:category = '전체' OR tp.post.category = :category) AND " +
-            "(:region = '전체' OR tp.post.user.address LIKE CONCAT('%', :region, '%')) AND " +
-            "tp.language = :language AND (tp.title LIKE CONCAT('%', :keyword, '%') OR tp.content LIKE CONCAT('%', :keyword, '%'))")
-    Page<TranslatedPost> findByCategoryAndRegionAndTitleOrContent(
+            "tp.language = :language AND tp.post.postType = :postType AND tp.title LIKE CONCAT('%', :keyword, '%')")
+    Page<TranslatedPost> findByCategoryAndRegionAndPostTypeAndTitle(
             @Param("category") String category,
             @Param("region") String region,
             @Param("keyword") String keyword,
             @Param("language") String language,
+            @Param("postType") String postType,
             Pageable pageable);
 
-    // 작성자 검색
     @Query("SELECT tp FROM TranslatedPost tp WHERE " +
             "(:category = '전체' OR tp.post.category = :category) AND " +
             "(:region = '전체' OR tp.post.user.address LIKE CONCAT('%', :region, '%')) AND " +
-            "tp.language = :language AND tp.post.user.name LIKE CONCAT('%', :username, '%')")
-    Page<TranslatedPost> findByCategoryAndRegionAndUsername(
+            "tp.language = :language AND tp.post.postType = :postType AND tp.content LIKE CONCAT('%', :keyword, '%')")
+    Page<TranslatedPost> findByCategoryAndRegionAndPostTypeAndContent(
+            @Param("category") String category,
+            @Param("region") String region,
+            @Param("keyword") String keyword,
+            @Param("language") String language,
+            @Param("postType") String postType,
+            Pageable pageable);
+
+    @Query("SELECT tp FROM TranslatedPost tp WHERE " +
+            "(:category = '전체' OR tp.post.category = :category) AND " +
+            "(:region = '전체' OR tp.post.user.address LIKE CONCAT('%', :region, '%')) AND " +
+            "tp.language = :language AND tp.post.postType = :postType AND " +
+            "(tp.title LIKE CONCAT('%', :keyword, '%') OR tp.content LIKE CONCAT('%', :keyword, '%'))")
+    Page<TranslatedPost> findByCategoryAndRegionAndPostTypeAndTitleOrContent(
+            @Param("category") String category,
+            @Param("region") String region,
+            @Param("keyword") String keyword,
+            @Param("language") String language,
+            @Param("postType") String postType,
+            Pageable pageable);
+
+    @Query("SELECT tp FROM TranslatedPost tp WHERE " +
+            "(:category = '전체' OR tp.post.category = :category) AND " +
+            "(:region = '전체' OR tp.post.user.address LIKE CONCAT('%', :region, '%')) AND " +
+            "tp.language = :language AND tp.post.postType = :postType AND tp.post.user.name LIKE CONCAT('%', :username, '%')")
+    Page<TranslatedPost> findByCategoryAndRegionAndPostTypeAndUsername(
             @Param("category") String category,
             @Param("region") String region,
             @Param("username") String username,
             @Param("language") String language,
+            @Param("postType") String postType,
             Pageable pageable);
 
     @Query("SELECT tp FROM TranslatedPost tp " +

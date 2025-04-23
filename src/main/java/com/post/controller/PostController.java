@@ -17,9 +17,9 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<?> getPosts(@RequestHeader("Authorization") String token, int page, int size,
-                                      String category, String sort, String region) { // 게시글 목록 조회
-        return postService.getPosts(token,page,size,category,sort,region);
-        // region category 는 '전체' 로 설정할 시 전체글 조회
+                                      String category, String sort, String region, String postType,
+                                      @RequestParam(required = false) List<String> tags) { // 게시글 목록 조회
+        return postService.getPosts(token, page, size, category, sort, region, postType, tags);
     }
 
     @PostMapping
@@ -49,11 +49,11 @@ public class PostController {
         return postService.deletePost(token, postId);
     }
 
-    @GetMapping("/search")
+    @GetMapping("/search") // 수정
     public ResponseEntity<?> searchPosts(@RequestHeader("Authorization") String token,
                                          int page, int size, String category, String sort,
-                                         String region, String keyword, String searchBy) {
-        return postService.searchPosts(token, page, size, category, sort, region, keyword, searchBy);
+                                         String region, String keyword, String searchBy, String postType) {
+        return postService.searchPosts(token, page, size, category, sort, region, keyword, searchBy, postType);
     }
 
     @PostMapping("/emotion/{postId}")
@@ -63,13 +63,13 @@ public class PostController {
         return postService.reactToPost(token, postId, postReqDto);
     }
 
-    @GetMapping("/recommendation")
+    @GetMapping("/recommendation") // res 수정
     public ResponseEntity<?> recommendPost(@RequestHeader("Authorization") String token,
                                       String tag, int cnt){
         return postService.recommendPost(token, tag, cnt);
     }
 
-    @GetMapping("/written")
+    @GetMapping("/written") // res 수정
     public ResponseEntity<?> getMyPost(@RequestHeader("Authorization") String token,
             long userId, int page, int size){
         return postService.getMyPost(token, userId, page, size);

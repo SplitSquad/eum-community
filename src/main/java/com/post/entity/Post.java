@@ -23,6 +23,8 @@ public class Post {
     private String createdAt;
     private Long views;
     private String category;
+    private String postType;
+    private String address;
     private Integer isFile;
 
     @PrePersist
@@ -31,12 +33,14 @@ public class Post {
     }
 
     @Builder
-    public Post(Long postId, User user, String createdAt, Long views, String category, Integer isFile) {
+    public Post(Long postId, User user, String createdAt, Long views, String category, String postType, String address, Integer isFile) {
         this.postId = postId;
         this.user = user;
         this.createdAt = createdAt;
         this.views = views;
         this.category = category;
+        this.postType = postType;
+        this.address = address;
         this.isFile = isFile;
     }
 }

@@ -90,6 +90,8 @@ public class ReplyService {
             TranslatedReply translatedReply = translatedReplyRepository
                     .findByReply_ReplyIdAndLanguage(reply.getReplyId(), language);
 
+            if(translatedReply == null) continue;
+
             long like = replyReactionRepository.countByReply_ReplyIdAndOption(reply.getReplyId(), "좋아요");
             long dislike = replyReactionRepository.countByReply_ReplyIdAndOption(reply.getReplyId(), "싫어요");
 

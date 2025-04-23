@@ -110,6 +110,8 @@ public class CommentService {
             TranslatedComment translatedComment = translatedCommentRepository
                     .findByComment_CommentIdAndLanguage(comment.getCommentId(), language);
 
+            if(translatedComment == null) continue;
+
             long dislike = commentReactionRepository
                     .countByComment_CommentIdAndOption(comment.getCommentId(), "싫어요");
 
@@ -260,6 +262,7 @@ public class CommentService {
                     .postTitle(translatedPost.getTitle())
                     .userName(comment.getUser().getName())
                     .postId(comment.getPost().getPostId())
+                    .isState(option)
                     .build();
 
             commentResDtoList.add(commentResDto);

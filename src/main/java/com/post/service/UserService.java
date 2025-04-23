@@ -48,33 +48,23 @@ public class UserService {
     }
 
     @KafkaListener(topics="createUser", groupId = "eum")
-    public void createUser(String message){
+    public void createUser(String message) {
         KafkaUserDto kafkaUserDto;
-        try{
-            kafkaUserDto = objectMapper.readValue(message ,KafkaUserDto.class);
-        }catch (Exception e){
-            e.printStackTrace();
-            return;
-        }
         try {
-            if(userRepository.existsById(kafkaUserDto.getUserId())){
-                return;
-            }
-            System.out.println(kafkaUserDto);
-            User user = User.builder()
-                    .name(kafkaUserDto.getName())
-                    .nation(kafkaUserDto.getNation())
-                    .language(kafkaUserDto.getLanguage())
-                    .role(kafkaUserDto.getRole())
-                    .address(kafkaUserDto.getAddress())
-                    .userId(kafkaUserDto.getUserId())
-                    .build();
-            userRepository.save(user);
-        }
-        catch (Exception e){
+            kafkaUserDto = objectMapper.readValue(message, KafkaUserDto.class);
+        } catch (Exception e) {
             e.printStackTrace();
             return;
         }
+        User user = User.builder()
+                .name(kafkaUserDto.getName())
+                .nation(kafkaUserDto.getNation())
+                .language(kafkaUserDto.getLanguage())
+                .role(kafkaUserDto.getRole())
+                .address(kafkaUserDto.getAddress())
+                .userId(kafkaUserDto.getUserId())
+                .build();
+        userRepository.save(user);
     }
 
     @Transactional
