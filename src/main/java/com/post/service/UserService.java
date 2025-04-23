@@ -15,7 +15,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics="updateUser", groupId = "eum")
+    @KafkaListener(topics="updateUser", groupId = "eum-community")
     public void updateUser(String message){
         KafkaUserDto kafkaUserDto;
         try{
@@ -33,7 +33,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    @KafkaListener(topics="updateLanguage", groupId = "eum")
+    @KafkaListener(topics="updateLanguage", groupId = "eum-community")
     public void updateLanguage(String message){
         KafkaUserDto kafkaUserDto;
         try{
@@ -47,7 +47,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    @KafkaListener(topics="createUser", groupId = "eum")
+    @KafkaListener(topics="createUser", groupId = "eum-community")
     public void createUser(String message) {
         KafkaUserDto kafkaUserDto;
         try {
@@ -68,7 +68,7 @@ public class UserService {
     }
 
     @Transactional
-    @KafkaListener(topics="deleteUser", groupId = "eum")
+    @KafkaListener(topics="deleteUser", groupId = "eum-community")
     public void deleteUser(String message){
         KafkaUserDto kafkaUserDto;
         try{
