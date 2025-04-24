@@ -16,8 +16,9 @@ public class TempUserController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/join")
-    public void join(String nation, String language, String address, String name) {
+    public void join(long userId, String nation, String language, String address, String name) {
         User user = new User();
+        user.setUserId(userId);
         user.setNation(nation);
         user.setLanguage(language);
         user.setAddress(address);

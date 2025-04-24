@@ -14,7 +14,7 @@ public interface TranslatedPostRepository extends JpaRepository<TranslatedPost, 
 
     @Query("SELECT tp FROM TranslatedPost tp WHERE " +
             "(:category = '전체' OR tp.post.category = :category) AND " +
-            "(:region = '전체' OR tp.post.user.address LIKE CONCAT('%', :region, '%')) AND " +
+            "(:region = '전체' OR tp.post.address LIKE CONCAT('%', :region, '%')) AND " +
             "tp.language = :language AND tp.post.postType = :postType AND tp.title LIKE CONCAT('%', :keyword, '%')")
     Page<TranslatedPost> findByCategoryAndRegionAndPostTypeAndTitle(
             @Param("category") String category,
@@ -26,7 +26,7 @@ public interface TranslatedPostRepository extends JpaRepository<TranslatedPost, 
 
     @Query("SELECT tp FROM TranslatedPost tp WHERE " +
             "(:category = '전체' OR tp.post.category = :category) AND " +
-            "(:region = '전체' OR tp.post.user.address LIKE CONCAT('%', :region, '%')) AND " +
+            "(:region = '전체' OR tp.post.address LIKE CONCAT('%', :region, '%')) AND " +
             "tp.language = :language AND tp.post.postType = :postType AND tp.content LIKE CONCAT('%', :keyword, '%')")
     Page<TranslatedPost> findByCategoryAndRegionAndPostTypeAndContent(
             @Param("category") String category,
@@ -38,7 +38,7 @@ public interface TranslatedPostRepository extends JpaRepository<TranslatedPost, 
 
     @Query("SELECT tp FROM TranslatedPost tp WHERE " +
             "(:category = '전체' OR tp.post.category = :category) AND " +
-            "(:region = '전체' OR tp.post.user.address LIKE CONCAT('%', :region, '%')) AND " +
+            "(:region = '전체' OR tp.post.address LIKE CONCAT('%', :region, '%')) AND " +
             "tp.language = :language AND tp.post.postType = :postType AND " +
             "(tp.title LIKE CONCAT('%', :keyword, '%') OR tp.content LIKE CONCAT('%', :keyword, '%'))")
     Page<TranslatedPost> findByCategoryAndRegionAndPostTypeAndTitleOrContent(
@@ -51,7 +51,7 @@ public interface TranslatedPostRepository extends JpaRepository<TranslatedPost, 
 
     @Query("SELECT tp FROM TranslatedPost tp WHERE " +
             "(:category = '전체' OR tp.post.category = :category) AND " +
-            "(:region = '전체' OR tp.post.user.address LIKE CONCAT('%', :region, '%')) AND " +
+            "(:region = '전체' OR tp.post.address LIKE CONCAT('%', :region, '%')) AND " +
             "tp.language = :language AND tp.post.postType = :postType AND tp.post.user.name LIKE CONCAT('%', :username, '%')")
     Page<TranslatedPost> findByCategoryAndRegionAndPostTypeAndUsername(
             @Param("category") String category,

@@ -444,7 +444,7 @@ public class PostService {
 
         Pageable pageable = PageRequest.of(page,size,sortOptions);
         Page<TranslatedPost> postList;
-
+        System.out.println(keyword + " " + postType);
         if(searchBy.equals("제목")) {
             postList = translatedPostRepository.findByCategoryAndRegionAndPostTypeAndTitle(
                     category, region, keyword, language, postType, pageable);

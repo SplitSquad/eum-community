@@ -18,7 +18,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "JOIN PostTag pt ON p.postId = pt.post.postId " +
             "JOIN Tag t ON pt.tag.tagId = t.tagId " +
             "WHERE (:category = '전체' OR p.category = :category) " +
-            "AND p.address LIKE CONCAT(:address, '%') " +
+            "AND (:address = '전체' OR p.address LIKE CONCAT(:address, '%')) " +
             "AND p.postType = :postType " +
             "AND t.name IN :tagNames")
     Page<Post> findByCategoryAndAddressLikeAndPostTypeAndTagNamesIn(
@@ -30,7 +30,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p " +
             "WHERE (:category = '전체' OR p.category = :category) " +
-            "AND p.address LIKE CONCAT(:address, '%') " +
+            "AND (:address = '전체' OR p.address LIKE CONCAT(:address, '%')) " +
             "AND p.postType = :postType")
     Page<Post> findByCategoryAndAddressLikeAndPostType(
             @Param("category") String category,
