@@ -34,4 +34,5 @@ public class TempUserController {
         res.addHeader("access-token", accessToken);
         return ResponseEntity.ok("");
     }
+
 }
