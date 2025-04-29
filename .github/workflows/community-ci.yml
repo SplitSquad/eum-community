@@ -52,10 +52,25 @@ jobs:
           # 매니페스트 레포지토리 클론
           git clone https://${GIT_USERNAME}:${GIT_TOKEN}@${MANIFEST_REPO} manifest-repo
           cd manifest-repo
-          # 이미지 태그 업데이트 (deployment.yaml 파일 직접 수정)
-          cd manifests/eum-backend/community
-          sed -i "s|image: ${ECR_REGISTRY}/${ECR_REPOSITORY}:.*|image: ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}|g" deployment.yaml
+          # 디렉토리 구조 확인 (디버깅 용도)
+          echo "매니페스트 레포지토리 디렉토리 구조:"
+          ls -la
+          # eum-backend/community 디렉토리로 이동 및 deployment.yaml 파일 업데이트
+          cd eum-backend/community || { echo "eum-backend/community 디렉토리가 없습니다"; exit 1; }
+          # deployment.yaml 파일이 있는지 확인
+          if [ -f "deployment.yaml" ]; then
+            echo "deployment.yaml 파일 발견 - 이미지 태그 업데이트 중..."
+            sed -i "s|image: ${ECR_REGISTRY}/${ECR_REPOSITORY}:.*|image: ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}|g" deployment.yaml
+            echo "업데이트된 이미지 태그:"
+            grep -A1 "image:" deployment.yaml
+          else
+            echo "ERROR: deployment.yaml 파일이 없습니다!"
+            echo "디렉토리 내용:"
+            ls -la
+            exit 1
+          fi
           # 변경사항 커밋 및 푸시
+          cd ../..  # 매니페스트 레포지토리 루트로 이동
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add .
