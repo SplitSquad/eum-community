@@ -50,5 +50,4 @@ public class CommentController {
                                        long userId, int page, int size){
         return commentService.getMyComment(token, userId, page, size);
     }
-
 }
