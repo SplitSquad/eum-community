@@ -4,7 +4,7 @@ server:
 # database
 spring:
   application:
-    name: post
+    name: community
 
   config:
     import: optional:file:.env[.properties]
