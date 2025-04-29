@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - '**'
   workflow_dispatch:
 jobs:
   build-and-push:
@@ -16,7 +18,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Build with Gradle
-        working-directory: ./community
         run: |
           chmod +x ./gradlew
           ./gradlew clean build -x test
@@ -34,7 +35,6 @@ jobs:
           ECR_REGISTRY: 879657431997.dkr.ecr.ap-northeast-2.amazonaws.com
           ECR_REPOSITORY: eum-community
           IMAGE_TAG: ${{ github.sha }}
-        working-directory: ./community
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
