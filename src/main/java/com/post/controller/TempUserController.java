@@ -29,6 +29,7 @@ public class TempUserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(long userId, HttpServletResponse res) {
+        System.out.println("잘옴???????");
         User user = userRepository.findById(userId).get();
         String accessToken = jwtUtil.createToken(userId, user.getRole(), "access");
         res.addHeader("access-token", accessToken);
