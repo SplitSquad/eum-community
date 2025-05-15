@@ -15,7 +15,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
-import util.TranslationJob;
 
 import java.util.List;
 import java.util.Map;
@@ -33,16 +32,6 @@ public class TranslationService {
     private static final String API_URL = "https://api-free.deepl.com/v2/translate";
 
     private final String[] targetLanguage = {"KO", "EN", "JA", "ZH", "DE", "FR", "ES", "RU"};
-
-    public void handleJob(TranslationJob job) {
-        if (job.getEntity() instanceof Post) {
-            translatePost((Post) job.getEntity(), (PostReqDto) job.getDto(), job.getOptionalId());
-        } else if (job.getEntity() instanceof Comment) {
-            translateComment((Comment) job.getEntity(), (CommentReqDto) job.getDto(), job.getOptionalId());
-        } else if (job.getEntity() instanceof Reply) {
-            translateReply((Reply) job.getEntity(), (ReplyReqDto) job.getDto(), job.getOptionalId());
-        }
-    }
 
     public Optional<String> translate(String text, String sourceLang, String targetLang) {
         RestTemplate restTemplate = new RestTemplate();
@@ -70,11 +59,15 @@ public class TranslationService {
         }
     }
 
+    @Async
     public void translatePost(Post post, PostReqDto postReqDto, Long postId) {
         for (String language : targetLanguage) { // 9개 언어로 번역해서 저장
-            TranslatedPost translatedPost = (postId == null) ? new TranslatedPost()
-                    : translatedPostRepository.findByPost_PostIdAndLanguage(postId, language);
-
+            TranslatedPost translatedPost;
+            if (postId == null) {
+                translatedPost = new TranslatedPost();
+            } else {
+                translatedPost = translatedPostRepository.findByPost_PostIdAndLanguage(postId, language);
+            }
             translatedPost.setPost(post);
             translatedPost.setLanguage(language);
 
@@ -99,11 +92,16 @@ public class TranslationService {
         }
     }
 
+    @Async
     public void translateComment(Comment comment, CommentReqDto commentReqDto, Long commentId) {
         for (String language : targetLanguage) { // 9개 언어로 번역해서 저장
-            TranslatedComment translatedComment = (commentId == null) ? new TranslatedComment()
-                    : translatedCommentRepository.findByComment_CommentIdAndLanguage(commentId, language);
-
+            TranslatedComment translatedComment;
+            if (commentId == null) {
+                translatedComment = new TranslatedComment();
+            } else {
+                translatedComment = translatedCommentRepository.
+                        findByComment_CommentIdAndLanguage(comment.getCommentId(), language);
+            }
             translatedComment.setComment(comment);
             translatedComment.setLanguage(language);
 
@@ -124,11 +122,16 @@ public class TranslationService {
         }
     }
 
+    @Async
     public void translateReply(Reply reply, ReplyReqDto replyReqDto, Long replyId) {
         for (String language : targetLanguage) { // 9개 언어로 번역해서 저장
-            TranslatedReply translatedReply = (replyId == null) ? new TranslatedReply()
-                    : translatedReplyRepository.findByReply_ReplyIdAndLanguage(replyId, language);
-
+            TranslatedReply translatedReply;
+            if (replyId == null) {
+                translatedReply = new TranslatedReply();
+            } else {
+                translatedReply = translatedReplyRepository
+                        .findByReply_ReplyIdAndLanguage(replyId, language);
+            }
             translatedReply.setLanguage(language);
             translatedReply.setReply(reply);
 

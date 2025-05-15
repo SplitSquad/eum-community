@@ -20,8 +20,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import util.TranslationJob;
-import util.TranslationQueue;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,7 +30,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class PostService {
-    private final TranslationQueue translationQueue;
+    private final TranslationService translationService;
     private final AwsS3Service awsS3Service;
     private final JwtUtil jwtUtil;
 
@@ -259,7 +257,7 @@ public class PostService {
             postTagRepository.save(postTag);
         }
 
-        translationQueue.enqueue(new TranslationJob(post, postReqDto, null));
+        translationService.translatePost(post, postReqDto, null);
 
         PostResDto postResDto = PostResDto.builder()
                 .postId(post.getPostId())
@@ -387,7 +385,7 @@ public class PostService {
             }
         }
 
-        translationQueue.enqueue(new TranslationJob(post, postReqDto, postId));
+        translationService.translatePost(post, postReqDto, postId);
 
         PostResDto postResDto = PostResDto.builder()
                 .title(postReqDto.getTitle())

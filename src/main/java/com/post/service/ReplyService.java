@@ -13,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import util.TranslationJob;
-import util.TranslationQueue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +23,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReplyService {
     private final JwtUtil jwtUtil;
-    private final TranslationQueue translationQueue;
+    private final TranslationService translationService;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
@@ -57,7 +55,7 @@ public class ReplyService {
                 .createdAt(reply.getCreatedAt())
                 .build();
 
-        translationQueue.enqueue(new TranslationJob(reply, replyReqDto, null));
+        translationService.translateReply(reply, replyReqDto, null);
 
         comment.setReplyCnt(comment.getReplyCnt() + 1);
         commentRepository.save(comment);
@@ -132,7 +130,7 @@ public class ReplyService {
             return ResponseEntity.badRequest().body("작성자만 수정 가능");
         }
 
-        translationQueue.enqueue(new TranslationJob(reply, replyReqDto, replyId));
+        translationService.translateReply(reply, replyReqDto, replyId);
 
         return ResponseEntity.ok(replyReqDto.getContent());
     }

@@ -20,7 +20,7 @@ public class TranslationQueue {
             while (true) {
                 try {
                     TranslationJob job = queue.take(); // 대기
-                    translationService.handleJob(job);
+                    //translationService.handleJob(job);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
