@@ -53,3 +53,7 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: ${EUREKA_IP}
+
+
+ai:
+  url: ${AI_IP}

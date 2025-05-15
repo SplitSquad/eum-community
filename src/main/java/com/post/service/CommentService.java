@@ -17,6 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import util.TranslationJob;
+import util.TranslationQueue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +36,7 @@ public class CommentService {
     private final TranslatedPostRepository translatedPostRepository;
 
     private final JwtUtil jwtUtil;
-    private final TranslationService translationService;
+    private final TranslationQueue translationQueue;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
@@ -65,7 +67,7 @@ public class CommentService {
                 .reply(0L)
                 .build();
 
-        translationService.translateComment(comment, commentReqDto, null);
+        translationQueue.enqueue(new TranslationJob(comment, commentReqDto, null));
 
         KafkaCommentDto kafkaCommentDto = KafkaCommentDto.builder()
                 .receiverId(post.getUser().getUserId())
@@ -153,7 +155,7 @@ public class CommentService {
             return ResponseEntity.badRequest().body("작성자만 수정 가능");
         }
 
-        translationService.translateComment(comment, commentReqDto, commentId);
+        translationQueue.enqueue(new TranslationJob(comment, commentReqDto, commentId));
 
         return ResponseEntity.ok(commentReqDto.getContent());
     }
