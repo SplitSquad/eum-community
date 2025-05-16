@@ -20,10 +20,7 @@ import org.springframework.stereotype.Service;
 import util.TranslationJob;
 import util.TranslationQueue;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -69,13 +66,14 @@ public class CommentService {
 
         translationQueue.enqueue(new TranslationJob(comment, commentReqDto, null));
 
-        KafkaCommentDto kafkaCommentDto = KafkaCommentDto.builder()
-                .receiverId(post.getUser().getUserId())
-                .senderId(user.get().getUserId())
-                .build();
+        if(!Objects.equals(post.getUser().getUserId(), user.get().getUserId())) {
+            KafkaCommentDto kafkaCommentDto = KafkaCommentDto.builder()
+                    .receiverId(post.getUser().getUserId())
+                    .senderId(user.get().getUserId())
+                    .build();
 
-        kafkaTemplate.send("commentToPost", objectMapper.writeValueAsString(kafkaCommentDto));
-        System.out.println("카프카 전송 완료");
+            kafkaTemplate.send("commentToPost", objectMapper.writeValueAsString(kafkaCommentDto));
+        }
 
         return ResponseEntity.ok(commentResDto);
     }

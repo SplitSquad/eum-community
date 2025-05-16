@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface TranslatedPostRepository extends JpaRepository<TranslatedPost, Long> {
     TranslatedPost findByPost_PostIdAndLanguage(Long postId, String language);
@@ -61,7 +63,7 @@ public interface TranslatedPostRepository extends JpaRepository<TranslatedPost, 
             @Param("postType") String postType,
             Pageable pageable);
 
-    @Query("SELECT tp FROM TranslatedPost tp " +
+    /*@Query("SELECT tp FROM TranslatedPost tp " +
             "JOIN tp.post p " +
             "JOIN PostTag pt ON pt.post = p " +
             "JOIN Tag t ON pt.tag = t " +
@@ -73,5 +75,23 @@ public interface TranslatedPostRepository extends JpaRepository<TranslatedPost, 
             @Param("tag") String tag,
             @Param("language") String language,
             @Param("sevenDaysAgo") String sevenDaysAgo,
-            Pageable pageable);
+            Pageable pageable);*/
+
+    @Query(value =
+                    "SELECT tp.* FROM translated_post tp " +
+                    "JOIN post p ON tp.post_id = p.post_id " +
+                    "JOIN post_tag pt ON pt.post_id = p.post_id " +
+                    "JOIN tag t ON pt.tag_id = t.tag_id " +
+                    "WHERE t.name = :tag " +
+                    "AND tp.language = :language " +
+                    "AND p.created_at >= :sevenDaysAgo " +
+                    "AND p.address = :address " +
+                    "ORDER BY RAND() " +
+                    "LIMIT 3",
+            nativeQuery = true)
+    List<TranslatedPost> findRandomTop3ByTagAndLanguageAndRecentDateAndAddress(
+            @Param("tag") String tag,
+            @Param("language") String language,
+            @Param("sevenDaysAgo") String sevenDaysAgo,
+            @Param("address") String address);
 }

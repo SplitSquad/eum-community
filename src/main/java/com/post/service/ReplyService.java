@@ -16,10 +16,7 @@ import org.springframework.stereotype.Service;
 import util.TranslationJob;
 import util.TranslationQueue;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -62,18 +59,23 @@ public class ReplyService {
         comment.setReplyCnt(comment.getReplyCnt() + 1);
         commentRepository.save(comment);
 
-        KafkaCommentDto kafkaCommentDto = KafkaCommentDto.builder()
-                .receiverId(comment.getUser().getUserId())
-                .senderId(user.get().getUserId())
-                .build();
+        if(!Objects.equals(comment.getUser().getUserId(), user.get().getUserId())) {
+            KafkaCommentDto kafkaCommentDto = KafkaCommentDto.builder()
+                    .receiverId(comment.getUser().getUserId())
+                    .senderId(user.get().getUserId())
+                    .build();
+            kafkaTemplate.send("replyToComment", objectMapper.writeValueAsString(kafkaCommentDto));
+        }
 
-        kafkaTemplate.send("replyToComment", objectMapper.writeValueAsString(kafkaCommentDto));
-        System.out.println("카프카 전송 완료");
+        if(!Objects.equals(comment.getPost().getUser().getUserId(), user.get().getUserId())) {
+            KafkaCommentDto kafkaCommentDto = KafkaCommentDto.builder()
+                    .receiverId(comment.getPost().getUser().getUserId())
+                    .senderId(user.get().getUserId())
+                    .build();
 
-        kafkaCommentDto.setReceiverId(comment.getPost().getUser().getUserId());
+            kafkaTemplate.send("commentToPost", objectMapper.writeValueAsString(kafkaCommentDto));
 
-        kafkaTemplate.send("commentToPost", objectMapper.writeValueAsString(kafkaCommentDto));
-        System.out.println("카프카 전송 완료");
+        }
 
         return ResponseEntity.ok(replyResDto);
     }

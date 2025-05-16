@@ -8,7 +8,7 @@ import com.post.dto.PostResDto;
 import com.post.entity.*;
 import com.post.repository.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import util.JwtUtil;
 import jakarta.transaction.Transactional;
@@ -17,17 +17,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import util.TranslationJob;
 import util.TranslationQueue;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -108,7 +105,7 @@ public class PostService {
         return postResDtoList;
     }
 
-    private List<PostResDto> translatedPostListToDto(Page<TranslatedPost> translatedPostList){
+    private List<PostResDto> translatedPostListToDto(List<TranslatedPost> translatedPostList){
         List<PostResDto> postResDtoList = new ArrayList<>(); //dto 변환
         for(TranslatedPost translatedPost : translatedPostList) {
 
@@ -472,7 +469,7 @@ public class PostService {
 
         long total = postList.getTotalElements();
 
-        List<PostResDto> postResDtoList = translatedPostListToDto(postList);
+        List<PostResDto> postResDtoList = translatedPostListToDto(postList.getContent());
 
         return ResponseEntity.ok(Map.of(
                 "postList", postResDtoList,
@@ -524,20 +521,24 @@ public class PostService {
         }
     }
 
-/*    public ResponseEntity<?> recommendPost(String token) {
+    public ResponseEntity<?> recommendPost(String token, String address) {
         Optional<User> user = verifyToken(token);
         if(user.isEmpty()) {
             return ResponseEntity.badRequest().body("유효하지 않은 토큰");
         }
 
-
-        // 통신
         long userId = user.get().getUserId();
 
         String url = aiUrl + "/user/" + userId + "/preferences";
         RestTemplate restTemplate = new RestTemplate();
 
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", token);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class); // 통신
+
         if(!response.getStatusCode().is2xxSuccessful()) {
             return ResponseEntity.status(response.getStatusCode()).body("유저 선호도 불러오기 실패");
         }
@@ -554,66 +555,41 @@ public class PostService {
             return ResponseEntity.badRequest().body("community_preferences 항목이 존재하지 않음");
         }
 
-        Map<String, Double> preferencesMap = 
+        Map<String, Double> preferencesMap = new HashMap<>(); //응답을 해쉬맵으로 변환
+        communityPreferences.fields().forEachRemaining(field -> {
+            preferencesMap.put(field.getKey(), field.getValue().doubleValue());
+        });
 
+        System.out.println(preferencesMap);
 
-        // 여기에 http://localhost:8000/user/{userId}/preferences GET 요청
-
-        /*-> {
-            "uid": 100000,
-                    "community_preferences": {
-                "관광/체험": 0.03542,
-                        "교통/이동": 0.0372,
-                        "기숙사/주거": 0.04199,
-                        "대사관/응급": 0.03493,
-                        "문화/생활": 0.0341,
-                        "부동산/계약": 0.03729,
-                        "비자/법률/노동": 0.03753,
-                        "생활환경/편의": 0.03496,
-                        "숙소/지역": 0.04515,
-                        "식도락/맛집": 0.33551,
-                        "알바/파트타임": 0.0469,
-                        "이력/채용": 0.04349,
-                        "잡페어/네트워킹": 0.0467,
-                        "주거지 관리/유지": 0.04483,
-                        "학사/캠퍼스": 0.05567,
-                        "학업지원": 0.04512,
-                        "행정/비자/서류": 0.04322
-            },
-            "info_preferences": {
-                "교육": 0.0757,
-                        "교통": 0.56483,
-                        "금융/세금": 0.05957,
-                        "비자/법률": 0.04798,
-                        "쇼핑": 0.04503,
-                        "의료/건강": 0.06341,
-                        "주거/부동산": 0.07942,
-                        "취업/직장": 0.06406
-            },
-            "discussion_preferences": {
-                "경제": 0.05992,
-                        "과학/기술": 0.05202,
-                        "생활/문화": 0.74004,
-                        "스포츠": 0.03998,
-                        "엔터테인먼트": 0.04409,
-                        "정치/사회": 0.06395
-            }
-        }
-
-        // -> community_preferences 의 요소들을 내림차순 정렬한다음에 첫번째 요소에서 랜덤으로 2개를 뺄거야. 저거는 태그라고 생각하면되
+        List<Map.Entry<String, Double>> sortedTag = preferencesMap.entrySet().stream()
+                .sorted(Map.Entry.<String, Double>comparingByValue().reversed()).collect(Collectors.toList());
 
         String language = user.get().getLanguage();
-
-        Pageable pageable = PageRequest.of(0, 2);
         String sevenDaysAgo = LocalDateTime.now().minusDays(7).toString();
 
-        Page<TranslatedPost> postList = translatedPostRepository.findTopByTagAndLanguageAndRecentDate(
-                tag, language, sevenDaysAgo, pageable);
+        List<String> topTags = sortedTag.stream()
+                .limit(3)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
 
-        List<PostResDto> postResDtoList = this.translatedPostListToDto(postList);
+        List<PostResDto> postResDtoList = new ArrayList<>();
+
+        for (String tag : topTags) {
+            System.out.println("topTag: " + tag);
+            List<TranslatedPost> posts = translatedPostRepository
+                    .findRandomTop3ByTagAndLanguageAndRecentDateAndAddress(
+                            tag, language, sevenDaysAgo, address);
+            postResDtoList.addAll(this.translatedPostListToDto(posts));
+        }
+
+        //Page<TranslatedPost> postList = translatedPostRepository.findTopByTagAndLanguageAndRecentDate(
+                //tag, language, sevenDaysAgo, pageable);
+
+        //List<PostResDto> postResDtoList = this.translatedPostListToDto(postList);
 
         return ResponseEntity.ok(postResDtoList);
-    }*/
+    }
 
     public ResponseEntity<?> getMyPost(String token, long userId, int page, int size) {
         Optional<User> user = verifyToken(token);

@@ -63,10 +63,10 @@ public class PostController {
         return postService.reactToPost(token, postId, postReqDto);
     }
 
-    /*@GetMapping("/recommendation") // res 수정
-    public ResponseEntity<?> recommendPost(@RequestHeader("Authorization") String token){
-        return postService.recommendPost(token);
-    }*/
+    @GetMapping("/recommendation") // res 수정
+    public ResponseEntity<?> recommendPost(@RequestHeader("Authorization") String token, String address){
+        return postService.recommendPost(token, address);
+    }
 
     @GetMapping("/written") // res 수정
     public ResponseEntity<?> getMyPost(@RequestHeader("Authorization") String token,
