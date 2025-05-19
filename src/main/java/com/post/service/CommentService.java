@@ -130,6 +130,7 @@ public class CommentService {
                     .reply(comment.getReplyCnt())
                     .createdAt(comment.getCreatedAt())
                     .userName(comment.getUser().getName())
+                    .userId(comment.getUser().getUserId())
                     .isState(option)
                     .build();
 

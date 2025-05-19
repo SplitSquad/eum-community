@@ -573,14 +573,15 @@ public class PostService {
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
 
-        List<PostResDto> postResDtoList = new ArrayList<>();
+        List<List<PostResDto>> postResDtoList = new ArrayList<>();
 
         for (String tag : topTags) {
             System.out.println("topTag: " + tag);
             List<TranslatedPost> posts = translatedPostRepository
                     .findRandomTop3ByTagAndLanguageAndRecentDateAndAddress(
                             tag, language, sevenDaysAgo, address);
-            postResDtoList.addAll(this.translatedPostListToDto(posts));
+            List<PostResDto> postResDto = this.translatedPostListToDto(posts);
+            postResDtoList.add(postResDto);
         }
 
         //Page<TranslatedPost> postList = translatedPostRepository.findTopByTagAndLanguageAndRecentDate(
@@ -588,7 +589,10 @@ public class PostService {
 
         //List<PostResDto> postResDtoList = this.translatedPostListToDto(postList);
 
-        return ResponseEntity.ok(postResDtoList);
+        return ResponseEntity.ok(Map.of(
+                "postList", postResDtoList,
+                "analysis", preferencesMap
+        ));
     }
 
     public ResponseEntity<?> getMyPost(String token, long userId, int page, int size) {

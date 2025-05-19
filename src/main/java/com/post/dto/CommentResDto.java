@@ -12,15 +12,18 @@ public class CommentResDto {
     Long dislike;
     Long reply;
     Long postId;
+    Long userId;
     String isState;
     String content;
     String userName;
     String createdAt;
     String postTitle;
 
+
     @Builder
-    public CommentResDto(Long commentId, String postTitle, String createdAt, String userName, String content, String isState, Long postId, Long reply, Long dislike, Long like) {
+    public CommentResDto(Long commentId, Long userId, String postTitle, String createdAt, String userName, String content, String isState, Long postId, Long reply, Long dislike, Long like) {
         this.commentId = commentId;
+        this.userId = userId;
         this.postTitle = postTitle;
         this.createdAt = createdAt;
         this.userName = userName;
