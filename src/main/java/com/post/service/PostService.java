@@ -323,6 +323,7 @@ public class PostService {
                 .views(post.getViews())
                 .commentCnt(commentCnt)
                 .userName(post.getUser().getName())
+                .userId(post.getUser().getUserId())
                 .title(translatedPost.getTitle())
                 .content(translatedPost.getContent())
                 .createdAt(post.getCreatedAt())

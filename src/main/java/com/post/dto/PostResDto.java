@@ -14,6 +14,7 @@ public class PostResDto {
     Long like;
     Long dislike;
     Long commentCnt;
+    Long userId;
     String isState;
     String title;
     String content;
@@ -26,8 +27,9 @@ public class PostResDto {
     List<String> tags;
 
     @Builder
-    public PostResDto(Long postId, Long views, Long like, Long dislike, Long commentCnt, String isState, String title, String content, String userName, String createdAt, String category, String postType, String address, List<String> files, List<String> tags) {
+    public PostResDto(Long postId, Long userId, Long views, Long like, Long dislike, Long commentCnt, String isState, String title, String content, String userName, String createdAt, String category, String postType, String address, List<String> files, List<String> tags) {
         this.postId = postId;
+        this.userId = userId;
         this.views = views;
         this.like = like;
         this.dislike = dislike;
