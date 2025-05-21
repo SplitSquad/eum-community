@@ -18,14 +18,16 @@ public class User {
     private String language;
     private String role;
     private String address;
+    private int ban;
 
     @Builder
-    public User(Long userId, String address, String role, String language, String nation, String name) {
+    public User(Long userId, String address, String role, String language, String nation, String name, int ban) {
         this.userId = userId;
         this.address = address;
         this.role = role;
         this.language = language;
         this.nation = nation;
         this.name = name;
+        this.ban = ban;
     }
 }

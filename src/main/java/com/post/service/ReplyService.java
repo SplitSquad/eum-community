@@ -38,6 +38,10 @@ public class ReplyService {
             return ResponseEntity.badRequest().body("유효하지 않은 토큰");
         }
 
+        if(user.get().getBan() == 1){
+            return ResponseEntity.badRequest().body("차단된 유저");
+        }
+
         Comment comment = commentRepository.findById(replyReqDto.getCommentId()).orElse(null);
         Reply reply = Reply.builder()
                 .comment(comment)
@@ -129,6 +133,10 @@ public class ReplyService {
             return ResponseEntity.badRequest().body("유효하지 않은 토큰");
         }
 
+        if(user.get().getBan() == 1){
+            return ResponseEntity.badRequest().body("차단된 유저");
+        }
+
         Reply reply = replyRepository.findByReplyId(replyId);
 
         if(reply.getUser() != user.get()){
@@ -145,6 +153,10 @@ public class ReplyService {
         Optional<User> user = verifyToken(token);
         if(user.isEmpty()) {
             return ResponseEntity.badRequest().body("유효하지 않은 토큰");
+        }
+
+        if(user.get().getBan() == 1){
+            return ResponseEntity.badRequest().body("차단된 유저");
         }
 
         Reply reply = replyRepository.findByReplyId(replyId);
@@ -166,6 +178,11 @@ public class ReplyService {
         if(user.isEmpty()) {
             return ResponseEntity.badRequest().body("유효하지 않은 토큰");
         }
+
+        if(user.get().getBan() == 1){
+            return ResponseEntity.badRequest().body("차단된 유저");
+        }
+
         long userId = user.get().getUserId();
         Reply reply = replyRepository.findByReplyId(replyId);
 

@@ -43,6 +43,10 @@ public class CommentService {
             return ResponseEntity.badRequest().body("유효하지 않은 토큰");
         }
 
+        if(user.get().getBan() == 1){
+            return ResponseEntity.badRequest().body("차단된 유저");
+        }
+
         Post post = postRepository.findById(commentReqDto.getPostId()).get();
 
         Comment comment = Comment.builder()
@@ -148,6 +152,10 @@ public class CommentService {
             return ResponseEntity.badRequest().body("유효하지 않은 토큰");
         }
 
+        if(user.get().getBan() == 1){
+            return ResponseEntity.badRequest().body("차단된 유저");
+        }
+
         Comment comment = commentRepository.findById(commentId).get();
 
         if(user.get() != comment.getUser()) {
@@ -166,6 +174,10 @@ public class CommentService {
             return ResponseEntity.badRequest().body("유효하지 않은 토큰");
         }
 
+        if(user.get().getBan() == 1){
+            return ResponseEntity.badRequest().body("차단된 유저");
+        }
+
         Comment comment = commentRepository.findById(commentId).get();
 
         if(user.get() != comment.getUser() && !user.get().getRole().equals("ROLE_ADMIN")) {
@@ -181,6 +193,11 @@ public class CommentService {
         if(user.isEmpty()) {
             return ResponseEntity.badRequest().body("유효하지 않은 토큰");
         }
+
+        if(user.get().getBan() == 1){
+            return ResponseEntity.badRequest().body("차단된 유저");
+        }
+
         long userId = user.get().getUserId();
         Comment comment = commentRepository.findById(commentId).get();
 

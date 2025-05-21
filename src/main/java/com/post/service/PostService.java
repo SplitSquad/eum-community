@@ -210,6 +210,9 @@ public class PostService {
         if(user.isEmpty()) {
             return ResponseEntity.badRequest().body("유효하지 않은 토큰");
         }
+        if(user.get().getBan() == 1){
+            return ResponseEntity.badRequest().body("차단된 유저");
+        }
 
         Post post = Post.builder()
                 .postType(postReqDto.getPostType())
@@ -345,6 +348,10 @@ public class PostService {
             return ResponseEntity.badRequest().body("유효하지 않은 토큰");
         }
 
+        if(user.get().getBan() == 1){
+            return ResponseEntity.badRequest().body("차단된 유저");
+        }
+
         Post post = postRepository.findById(postId).orElse(null);
         if(post == null) {
             return ResponseEntity.badRequest().body("잘못된 게시글");
@@ -401,6 +408,10 @@ public class PostService {
         Optional<User> user = verifyToken(token);
         if(user.isEmpty()) {
             return ResponseEntity.badRequest().body("유효하지 않은 토큰");
+        }
+
+        if(user.get().getBan() == 1){
+            return ResponseEntity.badRequest().body("차단된 유저");
         }
 
         Post post = postRepository.findById(postId).orElse(null);
@@ -484,6 +495,11 @@ public class PostService {
         if(user.isEmpty()) {
             return ResponseEntity.badRequest().body("유효하지 않은 토큰");
         }
+
+        if(user.get().getBan() == 1){
+            return ResponseEntity.badRequest().body("차단된 유저");
+        }
+
         long userId = user.get().getUserId();
 
         PostReaction postReaction = postReactionRepository.findByUser_UserIdAndPost_PostId(userId, postId);
@@ -585,10 +601,6 @@ public class PostService {
             postResDtoList.add(postResDto);
         }
 
-        //Page<TranslatedPost> postList = translatedPostRepository.findTopByTagAndLanguageAndRecentDate(
-                //tag, language, sevenDaysAgo, pageable);
-
-        //List<PostResDto> postResDtoList = this.translatedPostListToDto(postList);
 
         return ResponseEntity.ok(Map.of(
                 "postList", postResDtoList,

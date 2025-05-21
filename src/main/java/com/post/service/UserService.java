@@ -1,5 +1,6 @@
 package com.post.service;
 
+import com.post.dto.KafkaBanDto;
 import com.post.dto.KafkaUserDto;
 import com.post.entity.User;
 import com.post.repository.UserRepository;
@@ -63,6 +64,7 @@ public class UserService {
                 .role(kafkaUserDto.getRole())
                 .address(kafkaUserDto.getAddress())
                 .userId(kafkaUserDto.getUserId())
+                .ban(0)
                 .build();
         userRepository.save(user);
     }
@@ -79,5 +81,19 @@ public class UserService {
         }
         User user = userRepository.findById(kafkaUserDto.getUserId()).get();
         userRepository.delete(user);
+    }
+
+    @KafkaListener(topics="updateBan", groupId = "eum-community")
+    public void updateBan(String message){
+        KafkaBanDto kafkaBanDto;
+        try{
+            kafkaBanDto = objectMapper.readValue(message, KafkaBanDto.class);
+        }catch (Exception e){
+            e.printStackTrace();
+            return;
+        }
+        User user = userRepository.findById(kafkaBanDto.getUserId()).get();
+        user.setBan(kafkaBanDto.getBan());
+        userRepository.save(user);
     }
 }
