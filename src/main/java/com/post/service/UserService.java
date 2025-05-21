@@ -83,7 +83,7 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    @KafkaListener(topics="updateBan", groupId = "eum-community")
+    @KafkaListener(topics="deactivate", groupId = "eum-community")
     public void updateBan(String message){
         KafkaBanDto kafkaBanDto;
         try{
