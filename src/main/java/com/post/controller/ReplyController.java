@@ -44,4 +44,10 @@ public class ReplyController {
                                           @RequestBody ReplyReqDto replyReqDto){
         return replyService.reactToReply(token, replyId, replyReqDto);
     }
+
+    @GetMapping("/{replyId}")
+    public ResponseEntity<?> getReplyById(@RequestHeader("Authorization") String token,
+                                      @PathVariable long replyId){
+        return replyService.getReplyById(token, replyId);
+    }
 }

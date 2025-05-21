@@ -50,4 +50,10 @@ public class CommentController {
                                        long userId, int page, int size){
         return commentService.getMyComment(token, userId, page, size);
     }
+
+    @GetMapping("/{commentId}")
+    public ResponseEntity<?> getComment(@RequestHeader("Authorization") String token,
+                                        @PathVariable long commentId){
+        return commentService.getComment(token, commentId);
+    }
 }
