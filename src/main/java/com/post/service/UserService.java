@@ -93,7 +93,7 @@ public class UserService {
             return;
         }
         User user = userRepository.findById(kafkaBanDto.getUserId()).get();
-        user.setBan(kafkaBanDto.getBan());
+        user.setBan(kafkaBanDto.getDeactivate());
         userRepository.save(user);
     }
 }
