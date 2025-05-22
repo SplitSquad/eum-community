@@ -357,6 +357,10 @@ public class PostService {
             return ResponseEntity.badRequest().body("잘못된 게시글");
         }
 
+        if(!Objects.equals(user.get().getUserId(), post.getUser().getUserId())){
+            return ResponseEntity.badRequest().body("자신의 게시글만 수정 가능");
+        }
+
         List<PostFile> postFileList = postFileRepository.findByPost_PostId(postId);
         for(PostFile file : postFileList) {
             String key = extractKeyFromUrl(file.getUrl());
