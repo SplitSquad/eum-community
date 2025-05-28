@@ -56,6 +56,8 @@ public class ReplyService {
                 .dislike(0L)
                 .replyId(reply.getReplyId())
                 .userName(reply.getUser().getName())
+                .nation(reply.getUser().getNation())
+                .userId(reply.getUser().getUserId())
                 .createdAt(reply.getCreatedAt())
                 .build();
 
@@ -118,6 +120,7 @@ public class ReplyService {
                     .like(like)
                     .dislike(dislike)
                     .userName(reply.getUser().getName())
+                    .nation(reply.getUser().getNation())
                     .userId(reply.getUser().getUserId())
                     .createdAt(reply.getCreatedAt())
                     .isState(option)
@@ -236,6 +239,7 @@ public class ReplyService {
         CommentResDto commentResDto = CommentResDto.builder()
                 .content(translatedReply.getContent())
                 .userName(translatedReply.getReply().getUser().getName())
+                .nation(translatedReply.getReply().getUser().getNation())
                 .createdAt(translatedReply.getReply().getCreatedAt())
                 .build();
         return ResponseEntity.ok(commentResDto);

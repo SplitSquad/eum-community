@@ -23,11 +23,12 @@ public class PostResDto {
     String category;
     String postType;
     String address;
+    String nation;
     List<String> files;
     List<String> tags;
 
     @Builder
-    public PostResDto(Long postId, Long userId, Long views, Long like, Long dislike, Long commentCnt, String isState, String title, String content, String userName, String createdAt, String category, String postType, String address, List<String> files, List<String> tags) {
+    public PostResDto(Long postId, Long userId, Long views, Long like, Long dislike, Long commentCnt, String isState, String title, String content, String userName, String createdAt, String category, String postType, String address, List<String> files, List<String> tags, String nation) {
         this.postId = postId;
         this.userId = userId;
         this.views = views;
@@ -44,5 +45,6 @@ public class PostResDto {
         this.address = address;
         this.files = files;
         this.tags = tags;
+        this.nation = nation;
     }
 }

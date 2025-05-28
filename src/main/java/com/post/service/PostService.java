@@ -42,6 +42,7 @@ public class PostService {
     private final PostReactionRepository postReactionRepository;
     private final CommentRepository commentRepository;
 
+
     @Value("${ai.url}")
     private String aiUrl;
 
@@ -90,6 +91,7 @@ public class PostService {
                     .views(post.getViews())
                     .commentCnt(commentCnt)
                     .userName(post.getUser().getName())
+                    .nation(post.getUser().getNation())
                     .createdAt(post.getCreatedAt())
                     .like(like)
                     .dislike(dislike)
@@ -128,6 +130,7 @@ public class PostService {
                     .views(translatedPost.getPost().getViews())
                     .commentCnt(commentCnt)
                     .userName(translatedPost.getPost().getUser().getName())
+                    .nation(translatedPost.getPost().getUser().getNation())
                     .createdAt(translatedPost.getPost().getCreatedAt())
                     .like(like)
                     .dislike(dislike)
@@ -268,6 +271,7 @@ public class PostService {
                 .views(0L)
                 .commentCnt(0L)
                 .userName(post.getUser().getName())
+                .nation(post.getUser().getNation())
                 .title(postReqDto.getTitle())
                 .content(postReqDto.getContent())
                 .createdAt(post.getCreatedAt())
@@ -326,6 +330,7 @@ public class PostService {
                 .views(post.getViews())
                 .commentCnt(commentCnt)
                 .userName(post.getUser().getName())
+                .nation(post.getUser().getNation())
                 .userId(post.getUser().getUserId())
                 .title(translatedPost.getTitle())
                 .content(translatedPost.getContent())
@@ -360,6 +365,8 @@ public class PostService {
         if(!Objects.equals(user.get().getUserId(), post.getUser().getUserId())){
             return ResponseEntity.badRequest().body("자신의 게시글만 수정 가능");
         }
+
+
 
         List<PostFile> postFileList = postFileRepository.findByPost_PostId(postId);
         for(PostFile file : postFileList) {
