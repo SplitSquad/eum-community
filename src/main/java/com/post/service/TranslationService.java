@@ -4,11 +4,10 @@ import com.post.dto.CommentReqDto;
 import com.post.dto.PostReqDto;
 import com.post.dto.ReplyReqDto;
 import com.post.entity.*;
-import com.post.repository.TranslatedCommentRepository;
-import com.post.repository.TranslatedPostRepository;
-import com.post.repository.TranslatedReplyRepository;
+import com.post.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -29,6 +28,12 @@ public class TranslationService {
     private final TranslatedPostRepository translatedPostRepository;
     private final TranslatedCommentRepository translatedCommentRepository;
     private final TranslatedReplyRepository translatedReplyRepository;
+
+    private final KafkaTemplate<String, String> kafkaTemplate;
+
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
+    private final ReplyRepository replyRepository;
 
     private static final String API_URL = "https://api-free.deepl.com/v2/translate";
 
@@ -91,7 +96,11 @@ public class TranslationService {
             Optional<String> translatedContent = translate(
                     postReqDto.getContent(), postReqDto.getLanguage(), language);
 
-            if (translatedTitle.isEmpty() || translatedContent.isEmpty()) continue;
+            if (translatedTitle.isEmpty() || translatedContent.isEmpty()) {
+                kafkaTemplate.send("failPost", String.valueOf(post.getUser().getUserId()));
+                postRepository.delete(post);
+                break;
+            }
 
             translatedPost.setContent(translatedContent.get());
             translatedPost.setTitle(translatedTitle.get());
@@ -117,7 +126,11 @@ public class TranslationService {
                     commentReqDto.getContent(), commentReqDto.getLanguage(), language);
 
 
-            if (translatedContent.isEmpty()) continue;
+            if (translatedContent.isEmpty()) {
+                kafkaTemplate.send("failComment", String.valueOf(comment.getUser().getUserId()));
+                commentRepository.delete(comment);
+                break;
+            }
 
             translatedComment.setContent(translatedContent.get());
             translatedCommentRepository.save(translatedComment);
@@ -141,7 +154,11 @@ public class TranslationService {
             Optional<String> translatedContent = translate(
                     replyReqDto.getContent(), replyReqDto.getLanguage(), language);
 
-            if (translatedContent.isEmpty()) continue;
+            if (translatedContent.isEmpty()){
+                kafkaTemplate.send("failPost", String.valueOf(reply.getUser().getUserId()));
+                replyRepository.delete(reply);
+                break;
+            }
 
             translatedReply.setContent(translatedContent.get());
             translatedReplyRepository.save(translatedReply);
