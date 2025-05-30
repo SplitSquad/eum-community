@@ -77,6 +77,7 @@ public class TranslationService {
 
     public void translatePost(Post post, PostReqDto postReqDto, Long postId) {
         boolean flag = true;
+
         for (String language : targetLanguage) { // 9개 언어로 번역해서 저장
             TranslatedPost translatedPost = (postId == null) ? new TranslatedPost()
                     : translatedPostRepository.findByPost_PostIdAndLanguage(postId, language);
@@ -84,7 +85,7 @@ public class TranslationService {
             translatedPost.setPost(post);
             translatedPost.setLanguage(language);
 
-            if (postReqDto.getLanguage().equals(language.toLowerCase())) {
+            if (postReqDto.getLanguage().toUpperCase().equals(language)) {
                 translatedPost.setContent(postReqDto.getContent());
                 translatedPost.setTitle(postReqDto.getTitle());
                 translatedPost.setOrigin(1);
