@@ -641,4 +641,19 @@ public class PostService {
                 "total", total
         ));
     }
+
+    public ResponseEntity<?> getOriginPost(long postId) {
+        TranslatedPost translatedPost = translatedPostRepository.findByPost_postIdAndOrigin(postId, 1);
+
+        if(translatedPost == null)
+            return ResponseEntity.ok().body("원문이 존재하지 않는 게시물");
+
+
+        PostResDto postResDto = PostResDto.builder()
+                .title(translatedPost.getTitle())
+                .content(translatedPost.getContent())
+                .build();
+
+        return ResponseEntity.ok(postResDto);
+    }
 }

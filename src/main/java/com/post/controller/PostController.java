@@ -73,4 +73,9 @@ public class PostController {
             long userId, int page, int size){
         return postService.getMyPost(token, userId, page, size);
     }
+
+    @GetMapping("/origin/{postId}")
+    public ResponseEntity<?> getOriginPost(@PathVariable long postId){
+        return postService.getOriginPost(postId);
+    }
 }

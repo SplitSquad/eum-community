@@ -94,4 +94,6 @@ public interface TranslatedPostRepository extends JpaRepository<TranslatedPost, 
             @Param("language") String language,
             @Param("sevenDaysAgo") String sevenDaysAgo,
             @Param("address") String address);
+
+    TranslatedPost findByPost_postIdAndOrigin(long postId, int i);
 }
