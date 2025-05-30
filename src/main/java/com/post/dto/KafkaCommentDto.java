@@ -9,10 +9,14 @@ import lombok.NoArgsConstructor;
 public class KafkaCommentDto {
     Long receiverId;
     Long senderId;
+    Long postId;
+    String serviceType;
 
     @Builder
-    public KafkaCommentDto(Long senderId, Long receiverId) {
+    public KafkaCommentDto(Long senderId, Long receiverId, Long postId, String serviceType) {
         this.senderId = senderId;
         this.receiverId = receiverId;
+        this.postId = postId;
+        this.serviceType = serviceType;
     }
 }

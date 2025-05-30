@@ -76,6 +76,8 @@ public class CommentService {
             KafkaCommentDto kafkaCommentDto = KafkaCommentDto.builder()
                     .receiverId(post.getUser().getUserId())
                     .senderId(user.get().getUserId())
+                    .serviceType("community")
+                    .postId(post.getPostId())
                     .build();
 
             kafkaTemplate.send("commentToPost", objectMapper.writeValueAsString(kafkaCommentDto));

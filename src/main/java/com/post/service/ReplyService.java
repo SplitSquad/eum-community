@@ -70,6 +70,8 @@ public class ReplyService {
             KafkaCommentDto kafkaCommentDto = KafkaCommentDto.builder()
                     .receiverId(comment.getUser().getUserId())
                     .senderId(user.get().getUserId())
+                    .serviceType("community")
+                    .postId(comment.getPost().getPostId())
                     .build();
             kafkaTemplate.send("replyToComment", objectMapper.writeValueAsString(kafkaCommentDto));
         }
@@ -78,6 +80,8 @@ public class ReplyService {
             KafkaCommentDto kafkaCommentDto = KafkaCommentDto.builder()
                     .receiverId(comment.getPost().getUser().getUserId())
                     .senderId(user.get().getUserId())
+                    .serviceType("community")
+                    .postId(comment.getPost().getPostId())
                     .build();
 
             kafkaTemplate.send("commentToPost", objectMapper.writeValueAsString(kafkaCommentDto));
