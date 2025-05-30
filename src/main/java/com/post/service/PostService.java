@@ -210,6 +210,7 @@ public class PostService {
 
     public ResponseEntity<?> write(String token, PostReqDto postReqDto, List<MultipartFile> files) {
         Optional<User> user = verifyToken(token);
+        System.out.println(postReqDto);
         if(user.isEmpty()) {
             return ResponseEntity.badRequest().body("유효하지 않은 토큰");
         }
