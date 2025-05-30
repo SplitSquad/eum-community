@@ -86,6 +86,7 @@ public class TranslationService {
             if (postReqDto.getLanguage().equals(language)) {
                 translatedPost.setContent(postReqDto.getContent());
                 translatedPost.setTitle(postReqDto.getTitle());
+                translatedPost.setOrigin(1);
                 translatedPostRepository.save(translatedPost);
                 continue;
             }
@@ -104,8 +105,10 @@ public class TranslationService {
 
             translatedPost.setContent(translatedContent.get());
             translatedPost.setTitle(translatedTitle.get());
+            translatedPost.setOrigin(0);
             translatedPostRepository.save(translatedPost);
         }
+
     }
 
     public void translateComment(Comment comment, CommentReqDto commentReqDto, Long commentId) {

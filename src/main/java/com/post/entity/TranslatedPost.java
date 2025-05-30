@@ -23,13 +23,15 @@ public class TranslatedPost {
     @Column(columnDefinition = "TEXT")
     private String content;
     private String language;
+    private Integer origin;
 
     @Builder
-    public TranslatedPost(Long translationPostId, String language, String content, String title, Post post) {
+    public TranslatedPost(Long translationPostId, String language, String content, String title, Post post, Integer origin) {
         this.translationPostId = translationPostId;
         this.language = language;
         this.content = content;
         this.title = title;
         this.post = post;
+        this.origin = origin;
     }
 }

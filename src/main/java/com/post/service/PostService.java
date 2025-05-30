@@ -342,6 +342,7 @@ public class PostService {
                 .isState(option)
                 .postType(post.getPostType())
                 .address(post.getAddress())
+                .origin(translatedPost.getOrigin())
                 .build();
 
         return ResponseEntity.ok(postResDto);
