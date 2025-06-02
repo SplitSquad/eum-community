@@ -642,7 +642,7 @@ public class PostService {
         ));
     }
 
-    public ResponseEntity<?> getOriginPost(long postId) {
+    public ResponseEntity<?> getOriginPost(Long postId) {
         TranslatedPost translatedPost = translatedPostRepository.findByPost_postIdAndOrigin(postId, 1);
 
         if(translatedPost == null)

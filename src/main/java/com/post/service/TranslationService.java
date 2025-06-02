@@ -114,7 +114,7 @@ public class TranslationService {
 
         if (flag) { //원문 저장
             TranslatedPost translatedPost = (postId == null) ? new TranslatedPost()
-                    : translatedPostRepository.findByPost_PostIdAndLanguage(postId, postReqDto.getLanguage());
+                    : translatedPostRepository.findByPost_postIdAndOrigin(postId, 1);
 
             translatedPost.setPost(post);
             translatedPost.setLanguage(postReqDto.getLanguage());

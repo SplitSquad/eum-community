@@ -28,6 +28,11 @@ spring:
     listener:
       missing-topics-fatal: false
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
 translation:
   api-key: ${TRANSLATION_KEY}
 
@@ -46,6 +51,7 @@ cloud:
       static: ${S3_REGION}
     s3:
       bucketName: ${S3_BUCKET_NAME}
+
 
 eureka:
   client:
